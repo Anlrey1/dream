@@ -1,22 +1,21 @@
-import Vue from 'vue';
-import VueRouter from 'vue-router';
+import { createRouter, createWebHistory } from "vue-router";
 
-import Dream from '@/components/Dream.vue';
-import Horoscope from '@/components/Horoscope.vue';
-import Breakfast from '@/components/Breakfast.vue';
-import News from '@/components/News.vue';
-
-Vue.use(VueRouter);
+// Импортируем компоненты
+import DreamComponent from "@/components/DreamComponent.vue";
+import HoroscopeComponent from "@/components/HoroscopeComponent.vue";
+import BreakfastComponent from "@/components/BreakfastComponent.vue";
+import NewsComponent from "@/components/NewsComponent.vue";
 
 const routes = [
-  { path: '/dream', component: Dream },
-  { path: '/horoscope', component: Horoscope },
-  { path: '/breakfast', component: Breakfast },
-  { path: '/news', component: News },
+  { path: "/", redirect: "/dream" },
+  { path: "/dream", component: DreamComponent },
+  { path: "/horoscope", component: HoroscopeComponent },
+  { path: "/breakfast", component: BreakfastComponent },
+  { path: "/news", component: NewsComponent },
 ];
 
-const router = new VueRouter({
-  mode: 'history',
+const router = createRouter({
+  history: createWebHistory(),
   routes,
 });
 

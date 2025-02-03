@@ -3,11 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "serve": "vue-cli-service serve --host 0.0.0.0 --port $PORT",
+    "serve": "vue-cli-service serve --host 0.0.0.0 --port $PORT --mode production",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
+	 "format": "prettier --write .",
     "start": "npm run build && npm install -g serve && serve -s dist -l $PORT",
-    "format": "prettier --write ."
+	 "logs": "node -e \"console.log('Server running on:', process.env.PORT || 8080)\""
+    
   },
   "dependencies": {
     "@mdi/font": "^7.4.47",

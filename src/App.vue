@@ -12,7 +12,7 @@
     </v-app-bar>
 
     <!-- Основной контент -->
-    <v-container class="mt-5">
+    <v-container class="mt-12">
       <!-- Навигация по страницам (рендерится только если есть вкладки) -->
       <v-tabs v-if="tabsReady" v-model="tab" background-color="blue" grow>
         <v-tab to="/dream">Сон в руку</v-tab>

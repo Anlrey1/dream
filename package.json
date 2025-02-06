@@ -3,19 +3,21 @@
   "version": "0.1.0",
   "private": "true",
   "scripts": {
-    "serve": "vue-cli-service serve --host 0.0.0.0 --port $PORT",
+    "serve": "cross-env PORT=8080 vue-cli-service serve --host 0.0.0.0 --port 8080",
+    "websocket": "node server.js",
     "build": "vue-cli-service build",
-    "start": "npm run build && npm install -g serve && serve -s dist -l 8080",
+    "start": "NODE_ENV=production npm run build && npm install -g serve && serve -s dist -l 8080",
     "lint": "vue-cli-service lint",
     "format": "prettier --write ."
-    
   },
   "dependencies": {
     "@mdi/font": "^7.4.47",
     "core-js": "^3.8.3",
+    "node-telegram-bot-api": "^0.66.0",
     "vue": "^3.2.13",
     "vue-router": "^4.5.0",
-    "vuetify": "^3.7.9"
+    "vuetify": "^3.7.9",
+    "ws": "^8.18.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.16",
@@ -23,6 +25,7 @@
     "@vue/cli-plugin-babel": "~5.0.0",
     "@vue/cli-plugin-eslint": "~5.0.0",
     "@vue/cli-service": "~5.0.0",
+    "cross-env": "^7.0.3",
     "eslint": "^7.32.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^4.0.0",

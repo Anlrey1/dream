@@ -5,8 +5,14 @@ module.exports = defineConfig({
 
   devServer: {
     allowedHosts: "all", // ✅ Разрешаем любые хосты
+    hot: false, // 🔥 Отключаем горячую замену модулей (HMR)
+    liveReload: false, // 🔄 Отключаем автоматическое обновление
+
     client: {
-      webSocketURL: "ws://localhost:8080/ws", // ✅ Явно указываем WebSocket URL
+      webSocketURL:
+        process.env.NODE_ENV === "production"
+          ? undefined
+          : "ws://localhost:8080", // 🛠️ WebSocket только в dev-режиме
     },
   },
 

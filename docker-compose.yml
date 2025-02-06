@@ -9,4 +9,6 @@ services:
     stdin_open: true # ✅ Исправлено
     tty: true # ✅ Оставляем для корректной работы в терминале
     environment:
-      - CHOKIDAR_USEPOLLING=true
+      - CHOKIDAR_USEPOLLING=
+      - PORT=8080
+    command: ["npm", "run", "start"]

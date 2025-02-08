@@ -4,17 +4,18 @@ FROM node:18
 # Установка рабочей директории
 WORKDIR /app
 
-# Копирование файлов проекта
+# Копирование package.json и package-lock.json
 COPY package*.json ./
 
-# Устанавливаем зависимости
+# Устанавливаем зависимости, включая concurrently (добавляем его в devDependencies)
+RUN npm install concurrently --save-dev
 RUN npm install
 
-# Копируем весь проект внутрь контейнера
+# Копируем все файлы проекта в контейнер
 COPY . .
 
-# Открываем порт 8080
-EXPOSE 8080
+# Открываем порты (Vue.js и WebSocket)
+EXPOSE 8080 3000
 
-# Запуск приложения
-CMD ["npm", "run", "serve"]
+# Запуск Vue.js и WebSocket одновременно
+CMD ["npx", "concurrently", "--kill-others", "npm run serve", "npm run websocket"]

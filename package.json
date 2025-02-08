@@ -13,7 +13,9 @@
   "dependencies": {
     "@mdi/font": "^7.4.47",
     "core-js": "^3.8.3",
+    "dotenv": "^16.4.7",
     "node-telegram-bot-api": "^0.66.0",
+    "pg": "^8.13.1",
     "vue": "^3.2.13",
     "vue-router": "^4.5.0",
     "vuetify": "^3.7.9",

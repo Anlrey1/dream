@@ -1,10 +1,10 @@
 import { createRouter, createWebHistory } from "vue-router";
 
-// Импортируем компоненты
-import DreamComponent from "@/components/DreamComponent.vue";
-import HoroscopeComponent from "@/components/HoroscopeComponent.vue";
-import BreakfastComponent from "@/components/BreakfastComponent.vue";
-import NewsComponent from "@/components/NewsComponent.vue";
+// Импортируем компоненты **динамически** (ленивая загрузка)
+const DreamComponent = () => import("@/components/DreamComponent.vue");
+const HoroscopeComponent = () => import("@/components/HoroscopeComponent.vue");
+const BreakfastComponent = () => import("@/components/BreakfastComponent.vue");
+const NewsComponent = () => import("@/components/NewsComponent.vue");
 
 const routes = [
   { path: "/", redirect: "/dream" },

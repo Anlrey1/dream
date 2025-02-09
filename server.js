@@ -5,7 +5,7 @@ const WebSocket = require("ws");
 const http = require("http");
 
 const app = express();
-const port = process.env.PORT || 3000; // 📌 Делаем порт настраиваемым
+const port = process.env.PORT || 3000; // 📌 Настраиваемый порт
 
 // Создаём HTTP-сервер для Express и WebSocket
 const server = http.createServer(app);
@@ -17,20 +17,19 @@ const pool = new Pool({
 });
 
 // Проверяем подключение к БД
-pool
-  .connect()
+pool.connect()
   .then(() => console.log("✅ Подключено к PostgreSQL"))
   .catch((err) => {
     console.error("❌ Ошибка подключения к PostgreSQL:", err);
-    process.exit(1);
+    server.close(() => process.exit(1)); // 📌 Закрываем сервер при ошибке БД
   });
 
-// 📌 Простая проверка Express-сервера
+// 📌 Проверка Express-сервера
 app.get("/", (req, res) => {
   res.send("🚀 Бэкенд работает!");
 });
 
-// Создаём WebSocket-сервер на том же HTTP-сервере
+// Создаём WebSocket-сервер
 const wss = new WebSocket.Server({ server });
 
 wss.on("connection", (ws) => {
@@ -47,14 +46,9 @@ wss.on("connection", (ws) => {
       }
 
       if (data.type === "save_message") {
-        // 📌 Проверяем, есть ли сообщение
-        if (!data.message || typeof data.message !== "string") {
-          ws.send(
-            JSON.stringify({
-              type: "error",
-              message: "Сообщение должно быть строкой!",
-            })
-          );
+        // 📌 Проверяем, что сообщение является строкой и не превышает 500 символов
+        if (!data.message || typeof data.message !== "string" || data.message.length > 500) {
+          ws.send(JSON.stringify({ type: "error", message: "Сообщение должно быть строкой до 500 символов!" }));
           return;
         }
 
@@ -63,9 +57,7 @@ wss.on("connection", (ws) => {
           "INSERT INTO messages (text) VALUES ($1) RETURNING *",
           [data.message]
         );
-        ws.send(
-          JSON.stringify({ type: "db_response", message: result.rows[0] })
-        );
+        ws.send(JSON.stringify({ type: "db_response", message: result.rows[0] }));
       }
     } catch (error) {
       console.warn("⚠️ Ошибка обработки сообщения:", message);
@@ -73,25 +65,36 @@ wss.on("connection", (ws) => {
     }
   });
 
+  // 📌 Обрабатываем разрыв соединения
+  ws.on("close", () => {
+    console.log("🔌 Клиент отключился");
+  });
+
+  // 📌 Обрабатываем pong от клиента
+  ws.on("pong", () => {
+    console.log("🔄 Клиент откликнулся на ping");
+  });
+
   // ✅ Отправляем "ping" клиенту после подключения
   ws.send(JSON.stringify({ type: "ping" }));
 });
 
-console.log(`🚀 Используемый порт: ${port}`); // Выводим порт перед запуском сервера
-
+console.log(`🚀 Используемый порт: ${port}`);
 console.log(`🚀 WebSocket сервер запущен на ws://localhost:${port}`);
 
-// 📌 Запускаем HTTP-сервер (Express + WebSocket)
+// 📌 Запускаем HTTP-сервер с обработкой ошибок
 server.listen(port, "0.0.0.0", () => {
   console.log(`🚀 HTTP сервер запущен на http://0.0.0.0:${port}`);
+}).on("error", (err) => {
+  console.error("❌ Ошибка запуска сервера:", err);
+  process.exit(1);
 });
 
-
 // 📌 Обрабатываем завершение работы сервера
-process.on("SIGINT", () => {
+process.on("SIGINT", async () => {
   console.log("🛑 Остановка сервера...");
-  wss.close(() => {
-    console.log("✅ WebSocket-сервер остановлен.");
-    process.exit(0);
-  });
+  wss.close();
+  await pool.end(); // 📌 Закрываем соединение с БД
+  console.log("✅ БД отключена.");
+  process.exit(0);
 });

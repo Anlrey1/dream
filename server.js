@@ -77,12 +77,15 @@ wss.on("connection", (ws) => {
   ws.send(JSON.stringify({ type: "ping" }));
 });
 
+console.log(`🚀 Используемый порт: ${port}`); // Выводим порт перед запуском сервера
+
 console.log(`🚀 WebSocket сервер запущен на ws://localhost:${port}`);
 
 // 📌 Запускаем HTTP-сервер (Express + WebSocket)
-server.listen(port, () => {
-  console.log(`🚀 HTTP сервер запущен на http://localhost:${port}`);
+server.listen(port, "0.0.0.0", () => {
+  console.log(`🚀 HTTP сервер запущен на http://0.0.0.0:${port}`);
 });
+
 
 // 📌 Обрабатываем завершение работы сервера
 process.on("SIGINT", () => {
